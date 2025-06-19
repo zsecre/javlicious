@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src='//libtl.com/sdk.js' data-zone='9466593' data-sdk='show_9466593'></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1
   user-scalable=no">
@@ -142,6 +143,12 @@
   <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
 <script
 src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+<script
+  src="https://domain.com/sdk.js"
+  data-zone="2932315"
+  data-sdk="show_9466593"  <!-- Replace with your function name -->
+  data-auto="2/0.1/30/5/0">
+</script>
 
   <script>
     // Initialize the Telegram Web App
@@ -199,16 +206,28 @@ const app = firebase.initializeApp(firebaseConfig);
 
 // Function to toggle watch-cont display based on watch parameter
 function toggleWatchCont() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const watchTitle = urlParams.get("watch");
+    let watchTitle = null;
+
+    // First check normal query string
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.has("watch")) {
+        watchTitle = searchParams.get("watch");
+    }
+
+    // If not found, check hash (for Telegram Mini Apps)
+    if (!watchTitle && window.location.hash.includes("watch=")) {
+        const hashParams = new URLSearchParams(window.location.hash.slice(1)); // remove the "#"
+        watchTitle = hashParams.get("watch");
+    }
+
     const watchCont = document.getElementById("watch-cont");
 
     if (watchTitle) {
         const decodedWatchTitle = decodeURIComponent(watchTitle);
         watchCont.style.display = "flex";
-        document.body.style.overflow = "hidden"
+        document.body.style.overflow = "hidden";
         document.body.style.scrollbarWidth = "none";
-        // Query Firestore for document where title matches watch parameter
+
         db.collection('javlicious')
             .where('code', '==', decodedWatchTitle)
             .get()
@@ -218,22 +237,20 @@ function toggleWatchCont() {
                     return;
                 }
 
-                // Get the first matching document
                 const doc = querySnapshot.docs[0];
                 const data = doc.data();
-                // Display document data in watch-cont
                 document.getElementById("iframe-link").src = `${data.link}`;
                 console.log("Fetched document:", { id: doc.id, ...data });
             })
             .catch(error => {
                 console.error("Error fetching document:", error);
-                watchTitleElement.textContent = "Error loading content.";
             });
     } else {
         watchCont.style.display = "none";
-        document.body.style.overflow = ""
+        document.body.style.overflow = "";
     }
 }
+
 
 // Call on page load to handle initial URL
 toggleWatchCont();
@@ -259,10 +276,13 @@ fetchData().then(dataList => {
         
         // Add click event listener to update URL and toggle watch-cont
         div.addEventListener("click", () => {
-            const encodedTitle = encodeURIComponent(item.code);
-            window.history.pushState({}, "", `?watch=${encodedTitle}`);
-            console.log(`URL updated to: ?watch=${encodedTitle}`); // Debug
-            toggleWatchCont(); // Call immediately to update display
+            if (window.Telegram.WebApp) {
+    window.location.hash = `watch=${encodedTitle}`;
+} else {
+    window.history.pushState({}, "", `?watch=${encodedTitle}`);
+}
+toggleWatchCont();
+
         });
 
         container.appendChild(div);
@@ -274,6 +294,17 @@ fetchData().then(dataList => {
     console.error("Error in fetchData: ", error);
     container.innerHTML = "<p>Error loading thumbnails.</p>";
 });
+setInterval(() => {
+    show_9466593({ type: 'preload' })
+      .then(() => {
+        show_9466593();
+      })
+      .catch(() => {
+        console.log('Interstitial ad failed, trying fallback...');
+        // Optional: call another ad network or show custom message
+        showOtherAd(); // define this function for fallback
+      });
+  }, 1000 * 60 * 5);
     </script>
 </body>
 </html>
