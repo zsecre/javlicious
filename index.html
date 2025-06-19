@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1
+  user-scalable=no">
+  <title>anime</title>
+  
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@100;200;300;400;500&family=Inter:wght@100;200;300;400;500;600;700&family=Montserrat:wght@100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Oswald:wght@300;400;500&family=Outfit:wght@100..900&family=Poppins:wght@100;300;400;500;700&family=Quicksand:wght@300..700&family=Roboto+Condensed:wght@300;400;700&family=Rubik:wght@300..900&display=swap" rel="stylesheet">
+<style>
+    /* Optional: make the video responsive */
+    .video-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%; /* Keeps 16:9 aspect ratio */
+      height: 0;
+      overflow: hidden;
+    }
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    body{
+      margin: 0;
+      padding: 0;
+      color: white;
+      background: black;
+    }
+    #top-bar{
+      height: 60px;
+      width: 100%;
+      background: black;
+      border-bottom: .01px solid #303030;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 12px;
+      box-sizing: border-box;
+    }
+    #top-bar i{
+      font-size: 20px;
+    }
+    
+    #thumbnail, .thumbnail{
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 27px;
+    }
+    #thumbnail img, .thumbnail img{
+      width: 100%;
+      height: 200px;
+      margin-bottom: 8px;
+      object-fit: cover;
+    }
+    #thumbnail #title, .thumbnail .title{
+      padding: 0 8px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    #thumbnail #views, .thumbnail .views{
+      padding: 0 8px;
+      font-size: 12px;
+      opacity: .8;
+    }
+    #watch-cont{
+      display: flex;
+      position: fixed;
+      height: 100%;
+      width: 100%;
+      background: black;
+      top: 0;
+    }
+    #name{
+      font-family: Oswald;
+      font-size: 25px;
+      color: pink;
+    }
+  </style>
+  <script src="https://kit.fontawesome.com/caf9999568.js"
+  crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="top-bar">
+    <div id="menu-btn"><i class="fa-solid fa-bars"></i></div>
+    <div id="name-cont">
+      <div id="javtiful"></div>
+      <div id="name">Javlicious</div>
+    </div>
+    <div id="search-btn"><i class="fa-solid fa-magnifying-glass"></i>
+    </div>
+  </div>
+  
+  <div id="thumbnail">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkOgiN7Ul4Hq4Ca-WvHZesvRgV2RFIuIbuqi_QSMCkHmMOW0a5cpQiss1v&s=10">
+    <div id="title">MEYD-419 A Woman Married Who Is Targeted To Be R***d</div>
+    <div id="views"><i class="fa-solid fa-eye"></i> 725567</div>
+  </div>
+  
+  <h1>My Embedded YouTube Video</h1>
+
+  <!-- Option 1: Fixed size iframe -->
+<div id="data-container"></div>
+  <h2>Responsive Embedeyyy</h2>
+  <!-- Option 2: Responsive container -->
+  <div class="video-container">
+    <iframe width="560" height="315"
+    src="https://javtiful.com/embed/6b3799a3d9c728ee7424"
+    frameborder="0"
+    allowfullscreen sandbox="allow-scripts allow-same-origin
+    allow-presentation"></iframe>
+  </div>
+  
+  <div class="video-container">
+    <iframe width="560" height="315"
+    src="https://javtiful.com/embed/02c8ed1be1dfbf0835ea"
+    frameborder="0"
+    allowfullscreen sandbox="allow-scripts allow-same-origin
+    allow-presentation"></iframe>
+  </div>
+  
+  <div id="watch-cont">
+    <div class="video-container">
+    <iframe width="560" height="315" id="iframe-link"
+    src=""
+    frameborder="0"
+    allowfullscreen sandbox="allow-scripts allow-same-origin
+    allow-presentation"></iframe>
+  </div>
+  </div>
+  
+  
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <!-- Firestore -->
+  <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+<script
+src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Initialize the Telegram Web App
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.setBackgroundColor('#000000');
+    tg.setHeaderColor('#000000');
+    tg.expand();
+    
+    const initData = tg.initDataUnsafe;
+     const username = 'zsecre'
+     const userId = '12345'
+ //   const userId =   initData.user?.id;
+ //   const username =  initData.user?.first_name;
+
+    // Set user info (optional)
+  /*  const profilePic = initData.user?.photo_url;
+    if (profilePic) document.getElementById('profile-pic').src = profilePic;
+    */
+    
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCQEIPDfxOe48us49Kqu9GV8R1MH-D-A34",
+  authDomain: "secret-token-drop.firebaseapp.com",
+  projectId: "secret-token-drop",
+  storageBucket: "secret-token-drop.firebasestorage.app",
+  messagingSenderId: "178521956757",
+  appId: "1:178521956757:web:30c34a6d8d2bb8b2c3569c",
+  measurementId: "G-PN7BHX0L1R"
+};
+
+const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+
+    
+    
+    async function fetchData() {
+    try {
+        // Fetch all documents from the 'myCollection' collection
+        const querySnapshot = await db.collection('javlicious').get();
+        
+        // Map documents to an array containing ID and fields
+        const dataList = querySnapshot.docs.map(doc => ({
+            id: doc.id,           // Document ID
+            ...doc.data()         // Spread document fields (e.g., link, imageSource, title)
+        }));
+        
+        return dataList; // Return the array for further processing
+    } catch (error) {
+        console.error("Error fetching documents: ", error);
+        return []; // Return an empty array if an error occurs
+    }
+}
+
+// Function to toggle watch-cont display based on watch parameter
+function toggleWatchCont() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const watchTitle = urlParams.get("watch");
+    const watchCont = document.getElementById("watch-cont");
+
+    if (watchTitle) {
+        const decodedWatchTitle = decodeURIComponent(watchTitle);
+        watchCont.style.display = "flex";
+        document.body.style.overflow = "hidden"
+        document.body.style.scrollbarWidth = "none";
+        // Query Firestore for document where title matches watch parameter
+        db.collection('javlicious')
+            .where('code', '==', decodedWatchTitle)
+            .get()
+            .then(querySnapshot => {
+                if (querySnapshot.empty) {
+                    console.log("No document found with title:", decodedWatchTitle);
+                    return;
+                }
+
+                // Get the first matching document
+                const doc = querySnapshot.docs[0];
+                const data = doc.data();
+                // Display document data in watch-cont
+                document.getElementById("iframe-link").src = `${data.link}`;
+                console.log("Fetched document:", { id: doc.id, ...data });
+            })
+            .catch(error => {
+                console.error("Error fetching document:", error);
+                watchTitleElement.textContent = "Error loading content.";
+            });
+    } else {
+        watchCont.style.display = "none";
+        document.body.style.overflow = ""
+    }
+}
+
+// Call on page load to handle initial URL
+toggleWatchCont();
+
+// Update your fetchData thumbnail rendering to include the click handler
+const container = document.getElementById("data-container");
+fetchData().then(dataList => {
+    if (dataList.length === 0) {
+        console.log("No data found in Firestore.");
+        container.innerHTML = "<p>No thumbnails available.</p>";
+        return;
+    }
+
+    dataList.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "thumbnail"; // Use class instead of id
+        div.innerHTML = `
+            <img src="${item.img_src}" alt="${item.title}">
+            <div class="title">${item.title}</div>
+            <div class="views"><i class="fa-solid fa-eye"></i> ${item.views}
+            views</div>
+        `;
+        
+        // Add click event listener to update URL and toggle watch-cont
+        div.addEventListener("click", () => {
+            const encodedTitle = encodeURIComponent(item.code);
+            window.history.pushState({}, "", `?watch=${encodedTitle}`);
+            console.log(`URL updated to: ?watch=${encodedTitle}`); // Debug
+            toggleWatchCont(); // Call immediately to update display
+        });
+
+        container.appendChild(div);
+    });
+
+    // Handle browser back/forward navigation
+    window.addEventListener("popstate", toggleWatchCont);
+}).catch(error => {
+    console.error("Error in fetchData: ", error);
+    container.innerHTML = "<p>Error loading thumbnails.</p>";
+});
+    </script>
+</body>
+</html>
