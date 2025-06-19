@@ -205,21 +205,25 @@ const app = firebase.initializeApp(firebaseConfig);
 }
 
 // Function to toggle watch-cont display based on watch parameter
+// Function to get watch parameter (supports watch, startapp, and initData.start_param)
+function getWatchParameter() {
+    const urlParams = new URLSearchParams(window.location.search);
+    let watchTitle = urlParams.get("startapp"); // Telegram Mini Apps use startapp
+    if (!watchTitle) {
+        watchTitle = urlParams.get("watch"); // Fallback to watch for normal site
+    }
+    // Check Telegram initData for start_param (optional)
+    if (!watchTitle && window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
+        watchTitle = window.Telegram.WebApp.initDataUnsafe.start_param;
+    }
+    console.log("Current URL:", window.location.href); // Debug
+    console.log("Watch parameter:", watchTitle ? decodeURIComponent(watchTitle) : null);
+    return watchTitle ? decodeURIComponent(watchTitle) : null;
+}
+
+// Function to toggle watch-cont and fetch Firestore data
 function toggleWatchCont() {
-    let watchTitle = null;
-
-    // First check normal query string
-    const searchParams = new URLSearchParams(window.location.search);
-    if (searchParams.has("watch")) {
-        watchTitle = searchParams.get("watch");
-    }
-
-    // If not found, check hash (for Telegram Mini Apps)
-    if (!watchTitle && window.location.hash.includes("watch=")) {
-        const hashParams = new URLSearchParams(window.location.hash.slice(1)); // remove the "#"
-        watchTitle = hashParams.get("watch");
-    }
-
+    const watchTitle = getWatchParameter();
     const watchCont = document.getElementById("watch-cont");
 
     if (watchTitle) {
@@ -227,35 +231,40 @@ function toggleWatchCont() {
         watchCont.style.display = "flex";
         document.body.style.overflow = "hidden";
         document.body.style.scrollbarWidth = "none";
-
+        // Query Firestore for document where code matches watch parameter
         db.collection('javlicious')
             .where('code', '==', decodedWatchTitle)
             .get()
             .then(querySnapshot => {
                 if (querySnapshot.empty) {
-                    console.log("No document found with title:", decodedWatchTitle);
+                    console.log("No document found with code:", decodedWatchTitle);
+                    document.getElementById("iframe-link").src = ""; // Clear iframe
                     return;
                 }
 
+                // Get the first matching document
                 const doc = querySnapshot.docs[0];
                 const data = doc.data();
+                // Display document data in watch-cont
                 document.getElementById("iframe-link").src = `${data.link}`;
                 console.log("Fetched document:", { id: doc.id, ...data });
             })
             .catch(error => {
                 console.error("Error fetching document:", error);
+                document.getElementById("iframe-link").src = ""; // Clear iframe on error
             });
     } else {
         watchCont.style.display = "none";
         document.body.style.overflow = "";
+        document.body.style.scrollbarWidth = ""; // Reset scrollbar
+        document.getElementById("iframe-link").src = ""; // Clear iframe
     }
 }
-
 
 // Call on page load to handle initial URL
 toggleWatchCont();
 
-// Update your fetchData thumbnail rendering to include the click handler
+// Update thumbnail rendering to include click handler
 const container = document.getElementById("data-container");
 fetchData().then(dataList => {
     if (dataList.length === 0) {
@@ -266,23 +275,21 @@ fetchData().then(dataList => {
 
     dataList.forEach(item => {
         const div = document.createElement("div");
-        div.className = "thumbnail"; // Use class instead of id
+        div.className = "thumbnail";
         div.innerHTML = `
             <img src="${item.img_src}" alt="${item.title}">
             <div class="title">${item.title}</div>
-            <div class="views"><i class="fa-solid fa-eye"></i> ${item.views}
-            views</div>
+            <div class="views"><i class="fa-solid fa-eye"></i> ${item.views} views</div>
         `;
         
         // Add click event listener to update URL and toggle watch-cont
         div.addEventListener("click", () => {
-            if (window.Telegram.WebApp) {
-    window.location.hash = `watch=${encodedTitle}`;
-} else {
-    window.history.pushState({}, "", `?watch=${encodedTitle}`);
-}
-toggleWatchCont();
-
+            const encodedTitle = encodeURIComponent(item.code);
+            // Use startapp for Telegram, watch for normal site
+            const param = window.Telegram && window.Telegram.WebApp ? "startapp" : "watch";
+            window.history.pushState({}, "", `?${param}=${encodedTitle}`);
+            console.log(`URL updated to: ?${param}=${encodedTitle}`);
+            toggleWatchCont();
         });
 
         container.appendChild(div);
@@ -294,6 +301,12 @@ toggleWatchCont();
     console.error("Error in fetchData: ", error);
     container.innerHTML = "<p>Error loading thumbnails.</p>";
 });
+
+// Telegram Mini App initialization (if available)
+if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.ready();
+    console.log("Telegram Mini App initialized");
+}
 setInterval(() => {
     show_9466593({ type: 'preload' })
       .then(() => {
