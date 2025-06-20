@@ -76,11 +76,63 @@
       width: 100%;
       background: black;
       top: 0;
+      z-index: 2;
     }
     #name{
       font-family: Oswald;
       font-size: 25px;
       color: pink;
+    }
+    #search-cont{
+      position: fixed;
+      top: 0;
+      min-height: 200px;
+      width: 100%;
+      background: black;
+      display: none;
+      flex-direction: column;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    #search-bar{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px;
+    }
+    #search-input{
+      border-radius: 50px;
+      border: none;
+      outline: none;
+      padding: 10px 8px;
+      margin-right: 10%;
+    }
+    #search-result-cont{
+      width: 100%;
+      min-height: 30px;
+      background: #343434;
+      border-radius: 3px;
+      margin: 8px 0;
+      
+    }
+    img{
+   pointer-events: none;
+    }
+    .search-result img{
+      height: 75px;
+      width: 125px;
+    }
+    .search-result{
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 3px 0;
+      gap: 2px;
+    }
+    #result-title{
+      font-size: 12px;
+      
     }
   </style>
   <script src="https://kit.fontawesome.com/caf9999568.js"
@@ -97,33 +149,10 @@
     </div>
   </div>
   
-  <div id="thumbnail">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkOgiN7Ul4Hq4Ca-WvHZesvRgV2RFIuIbuqi_QSMCkHmMOW0a5cpQiss1v&s=10">
-    <div id="title">MEYD-419 A Woman Married Who Is Targeted To Be R***d</div>
-    <div id="views"><i class="fa-solid fa-eye"></i> 725567</div>
-  </div>
-  
-  <h1>My Embedded YouTube Video</h1>
+  <h1>  Watch Now</h1>
 
   <!-- Option 1: Fixed size iframe -->
 <div id="data-container"></div>
-  <h2>Responsive Embedeyyy</h2>
-  <!-- Option 2: Responsive container -->
-  <div class="video-container">
-    <iframe width="560" height="315"
-    src="https://javtiful.com/embed/6b3799a3d9c728ee7424"
-    frameborder="0"
-    allowfullscreen sandbox="allow-scripts allow-same-origin
-    allow-presentation"></iframe>
-  </div>
-  
-  <div class="video-container">
-    <iframe width="560" height="315"
-    src="https://javtiful.com/embed/02c8ed1be1dfbf0835ea"
-    frameborder="0"
-    allowfullscreen sandbox="allow-scripts allow-same-origin
-    allow-presentation"></iframe>
-  </div>
   
   <div id="watch-cont">
     <div class="video-container">
@@ -134,6 +163,17 @@
     allow-presentation"></iframe>
   </div>
   </div>
+  <div id="search-cont">
+    <div id="search-bar">
+      <div id="close-search">
+        Close
+      </div>
+      <input type="search" placeholder="Search code or title" id="search-input">
+    </div>
+    <div id="search-result-cont">
+      
+    </div>
+  </div>
   
   
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -141,7 +181,7 @@
   
   <!-- Firestore -->
   <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
-<script
+<script>
 src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
 <script
   src="https://domain.com/sdk.js"
@@ -318,6 +358,117 @@ setInterval(() => {
         showOtherAd(); // define this function for fallback
       });
   }, 1000 * 60 * 5);
+  // Function to clear query parameters and update UI
+function clearQueryParameters() {
+    window.history.pushState({}, "", window.location.pathname);
+    console.log("Parameters cleared, new URL:", window.location.href);
+    toggleWatchCont();
+}
+
+// Telegram Mini App: Handle BackButton
+if (window.Telegram && window.Telegram.WebApp) {
+    const webApp = window.Telegram.WebApp;
+    webApp.ready();
+    console.log("Telegram Mini App initialized");
+
+    const backButton = webApp.BackButton;
+    backButton.onClick(() => {
+        clearQueryParameters();
+        backButton.hide();
+    });
+
+    function updateBackButton() {
+        if (getWatchParameter()) {
+            backButton.show();
+        } else {
+            backButton.hide();
+        }
+    }
+
+    updateBackButton();
+    window.addEventListener("popstate", updateBackButton);
+}
+
+// In thumbnail click handler (inside fetchData)
+if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.BackButton.show();
+}
+
+document.getElementById('search-btn').addEventListener('click', async () => {
+
+    document.getElementById("search-cont").style.display = "flex"
+})
+document.getElementById('close-search').addEventListener('click', async () => {
+
+    document.getElementById("search-cont").style.display = "none"
+})
+
+function searchByTitle(searchInput) {
+            const searchResults = document.getElementById("search-result-cont");
+
+            if (!searchInput) {
+                searchResults.innerHTML = "";
+                return;
+            }
+
+            // Fetch all documents and filter client-side
+            db.collection('javlicious')
+                .get()
+                .then(querySnapshot => {
+                    searchResults.innerHTML = "";
+                    if (querySnapshot.empty) {
+                        console.log("No documents found in javlicious");
+                        searchResults.innerHTML = "<p>No results found.</p>";
+                        return;
+                    }
+
+                    // Filter documents where title contains searchInput (case-insensitive)
+                    const results = [];
+                    querySnapshot.forEach(doc => {
+                        const data = doc.data();
+                        if (data.title && data.title.toLowerCase().includes(searchInput.toLowerCase())) {
+                            results.push({ id: doc.id, ...data });
+                        }
+                    });
+
+                    if (results.length === 0) {
+                        searchResults.innerHTML = "<p>No results found.</p>";
+                        return;
+                    }
+
+                    // Display matching documents
+                    results.forEach(item => {
+                        const resultDiv = document.createElement("div");
+                        resultDiv.className = "search-result";
+                        resultDiv.innerHTML = `
+                            <img src="${item.img_src}" alt="${item.title}">
+                            <div id="result-title">
+                                <div>${item.title}</div>
+                            </div>
+                        `;
+                        resultDiv.addEventListener("click", () => {
+                            const encodedCode = encodeURIComponent(item.code);
+                            const param = window.Telegram && window.Telegram.WebApp ? "startapp" : "watch";
+                            window.history.pushState({}, "", `?${param}=${encodedCode}`);
+                            toggleWatchCont();
+                            if (window.Telegram && window.Telegram.WebApp) {
+                                window.Telegram.WebApp.BackButton.show();
+                            }
+                        });
+                        searchResults.appendChild(resultDiv);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error searching documents:", error);
+                    searchResults.innerHTML = "<p>Error loading results.</p>";
+                });
+        }
+
+        // NEW: Add input event listener for auto-search
+        document.getElementById("search-input").addEventListener("input", (event) => {
+            const searchInput = event.target.value.trim();
+            searchByTitle(searchInput);
+        });
     </script>
 </body>
 </html>
