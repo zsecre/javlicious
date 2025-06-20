@@ -70,7 +70,7 @@
       opacity: .8;
     }
     #watch-cont{
-      display: flex;
+      display: none;
       position: fixed;
       height: 100%;
       width: 100%;
@@ -134,6 +134,10 @@
       font-size: 12px;
       
     }
+    #search-note{
+      font-size: 10px;
+      padding: 8px;
+    }
   </style>
   <script src="https://kit.fontawesome.com/caf9999568.js"
   crossorigin="anonymous"></script>
@@ -171,7 +175,10 @@
       <input type="search" placeholder="Search code or title" id="search-input">
     </div>
     <div id="search-result-cont">
-      
+      <div id="search-note">
+        This app is new, some of your search may be not show up or not yet
+        uploaded.
+      </div>
     </div>
   </div>
   
@@ -181,9 +188,9 @@
   
   <!-- Firestore -->
   <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
-<script>
-src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
 <script
+src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+<script>
   src="https://domain.com/sdk.js"
   data-zone="2932315"
   data-sdk="show_9466593"  <!-- Replace with your function name -->
@@ -220,7 +227,7 @@ const firebaseConfig = {
   measurementId: "G-PN7BHX0L1R"
 };
 
-const app = firebase.initializeApp(firebaseConfig);
+  const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     
 
